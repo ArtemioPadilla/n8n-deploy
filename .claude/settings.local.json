@@ -56,7 +56,17 @@
       "Bash(npx prettier:*)",
       "Bash(cat:*)",
       "Bash(shellcheck:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(cdk synth:*)",
+      "Bash(.venv/bin/pip show:*)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 .venv/bin/python -m pdb app.py)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 .venv/bin/python test_minimal.py 2 >& 1)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 .venv/bin/python test_no_tags.py 2 >& 1)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 .venv/bin/python test_with_tags.py 2 >& 1)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 CDK_DEBUG=true cdk context -c environment=dev 2 >& 1)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 .venv/bin/python test_export_issue.py 2 >& 1)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 .venv/bin/python test_environment_property.py 2 >& 1)",
+      "Bash(JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 cdk synth -c environment=dev 2 >& 1)"
     ],
     "deny": []
   }

@@ -17,6 +17,7 @@ class N8nBaseStack(Stack):
         construct_id: str,
         config: N8nConfig,
         environment: str,
+        stack_type: Optional[str] = None,
         **kwargs,
     ) -> None:
         """Initialize base stack.
@@ -26,11 +27,13 @@ class N8nBaseStack(Stack):
             construct_id: Stack ID
             config: N8n configuration
             environment: Environment name (dev, staging, production)
+            stack_type: Optional stack type (minimal, standard, enterprise)
             **kwargs: Additional stack properties
         """
         # Get environment config
         self.config = config
         self._environment = environment
+        self._stack_type = stack_type
         self.env_config = config.get_environment(environment)
 
         if not self.env_config:
@@ -62,7 +65,7 @@ class N8nBaseStack(Stack):
         if self.config.global_config.tags:
             for key, value in self.config.global_config.tags.items():
                 # Replace template variables
-                tag_value = value.replace("{{ environment }}", self.environment)
+                tag_value = value.replace("{{ environment }}", self.env_name)
                 Tags.of(self).add(key, tag_value)
 
         # Environment-specific tags
@@ -71,10 +74,15 @@ class N8nBaseStack(Stack):
                 Tags.of(self).add(key, value)
 
         # Standard tags
-        Tags.of(self).add("Environment", self.environment)
+        Tags.of(self).add("Env", self.env_name)  # Changed from "Environment" to "Env"
         Tags.of(self).add("Stack", self.stack_name)
         Tags.of(self).add("ProjectName", self.config.global_config.project_name)
         Tags.of(self).add("Organization", self.config.global_config.organization)
+        Tags.of(self).add("ManagedBy", "CDK")
+
+        # Optional stack type tag
+        if self._stack_type:
+            Tags.of(self).add("StackType", self._stack_type)
 
     def get_resource_name(self, resource_type: str, name: str = "") -> str:
         """Generate consistent resource names.
@@ -88,7 +96,7 @@ class N8nBaseStack(Stack):
         """
         parts = [
             self.config.global_config.project_name,
-            self.environment,
+            self.env_name,
             resource_type,
         ]
 
@@ -173,11 +181,11 @@ class N8nBaseStack(Stack):
 
     def is_production(self) -> bool:
         """Check if this is a production environment."""
-        return self.environment.lower() in ["production", "prod"]
+        return self.env_name.lower() in ["production", "prod"]
 
     def is_development(self) -> bool:
         """Check if this is a development environment."""
-        return self.environment.lower() in ["development", "dev"]
+        return self.env_name.lower() in ["development", "dev"]
 
     def get_cost_allocation_tags(self) -> Dict[str, str]:
         """Get cost allocation tags for the environment."""
@@ -209,14 +217,14 @@ class N8nBaseStack(Stack):
         return component in components
 
     @property
-    def environment(self) -> str:
+    def env_name(self) -> str:
         """Get the environment name."""
         return self._environment
 
     @property
     def stack_prefix(self) -> str:
         """Get consistent stack prefix for resource naming."""
-        return f"{self.config.global_config.project_name}-{self.environment}"
+        return f"{self.config.global_config.project_name}-{self.env_name}"
 
     @property
     def is_spot_enabled(self) -> bool:

@@ -80,7 +80,7 @@ environments:
         external_api_access: true
 
   test:
-    account: "123456789012"
+    account: "111111111111"
     region: "us-east-1"
     settings:
       fargate:

@@ -125,7 +125,7 @@ class NetworkStack(N8nBaseStack):
         # Default based on environment
         if self.is_production():
             return 3
-        elif self.environment == "staging":
+        elif self.env_name == "staging":
             return 2
         else:
             return 1

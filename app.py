@@ -11,6 +11,7 @@ Usage:
     cdk deploy -c environment=production
     cdk deploy -c environment=dev -c stack_type=minimal
 """
+import os
 import sys
 from typing import Optional
 
@@ -67,7 +68,15 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             components.append("monitoring")
 
     # Create CDK environment
-    cdk_env = cdk.Environment(account=env_config.account, region=env_config.region)
+    # For synthesis with dummy accounts, use CDK's default env
+    if env_config.account in ["123456789012", "111111111111", "000000000000"]:
+        # Use CDK's default synthesis environment
+        cdk_env = cdk.Environment(
+            account=os.environ.get("CDK_DEFAULT_ACCOUNT", env_config.account),
+            region=os.environ.get("CDK_DEFAULT_REGION", env_config.region),
+        )
+    else:
+        cdk_env = cdk.Environment(account=env_config.account, region=env_config.region)
 
     # Create network stack
     network_stack = None
@@ -77,6 +86,7 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             f"{stack_prefix}-network",
             config=config,
             environment=environment,
+            stack_type=stack_type,
             env=cdk_env,
         )
 
@@ -90,6 +100,7 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             f"{stack_prefix}-storage",
             config=config,
             environment=environment,
+            stack_type=stack_type,
             network_stack=network_stack,
             env=cdk_env,
         )
@@ -112,6 +123,7 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             f"{stack_prefix}-database",
             config=config,
             environment=environment,
+            stack_type=stack_type,
             network_stack=network_stack,
             env=cdk_env,
         )
@@ -129,6 +141,7 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             f"{stack_prefix}-compute",
             config=config,
             environment=environment,
+            stack_type=stack_type,
             network_stack=network_stack,
             storage_stack=storage_stack,
             database_endpoint=database_endpoint,
@@ -146,6 +159,7 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             f"{stack_prefix}-access",
             config=config,
             environment=environment,
+            stack_type=stack_type,
             compute_stack=compute_stack,
             env=cdk_env,
         )
@@ -160,19 +174,15 @@ def create_stacks(app: cdk.App, environment: str, stack_type: Optional[str] = No
             f"{stack_prefix}-monitoring",
             config=config,
             environment=environment,
+            stack_type=stack_type,
             compute_stack=compute_stack,
             storage_stack=storage_stack,
             database_stack=database_stack,
             env=cdk_env,
         )
 
-    # Add tags to all stacks
-    cdk.Tags.of(app).add("Environment", environment)
-    cdk.Tags.of(app).add("Project", config.global_config.project_name)
-    cdk.Tags.of(app).add("ManagedBy", "CDK")
-
-    if stack_type:
-        cdk.Tags.of(app).add("StackType", stack_type)
+    # Tags are applied in the base stack class to avoid synthesis issues
+    # when the environment parameter might be interpreted as an AWS environment specification
 
 
 def main():
