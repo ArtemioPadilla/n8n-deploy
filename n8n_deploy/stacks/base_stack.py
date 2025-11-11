@@ -62,7 +62,7 @@ class N8nBaseStack(Stack):
         if self.config.global_config.tags:
             for key, value in self.config.global_config.tags.items():
                 # Replace template variables
-                tag_value = value.replace("{{ environment }}", self.environment)
+                tag_value = value.replace("{{ environment }}", self.environment_name)
                 Tags.of(self).add(key, tag_value)
 
         # Environment-specific tags
@@ -71,7 +71,7 @@ class N8nBaseStack(Stack):
                 Tags.of(self).add(key, value)
 
         # Standard tags
-        Tags.of(self).add("Environment", self.environment)
+        Tags.of(self).add("Environment", self.environment_name)
         Tags.of(self).add("Stack", self.stack_name)
         Tags.of(self).add("ProjectName", self.config.global_config.project_name)
         Tags.of(self).add("Organization", self.config.global_config.organization)
@@ -88,7 +88,7 @@ class N8nBaseStack(Stack):
         """
         parts = [
             self.config.global_config.project_name,
-            self.environment,
+            self.environment_name,
             resource_type,
         ]
 
@@ -173,11 +173,11 @@ class N8nBaseStack(Stack):
 
     def is_production(self) -> bool:
         """Check if this is a production environment."""
-        return self.environment.lower() in ["production", "prod"]
+        return self.environment_name.lower() in ["production", "prod"]
 
     def is_development(self) -> bool:
         """Check if this is a development environment."""
-        return self.environment.lower() in ["development", "dev"]
+        return self.environment_name.lower() in ["development", "dev"]
 
     def get_cost_allocation_tags(self) -> Dict[str, str]:
         """Get cost allocation tags for the environment."""
@@ -209,14 +209,14 @@ class N8nBaseStack(Stack):
         return component in components
 
     @property
-    def environment(self) -> str:
+    def environment_name(self) -> str:
         """Get the environment name."""
         return self._environment
 
     @property
     def stack_prefix(self) -> str:
         """Get consistent stack prefix for resource naming."""
-        return f"{self.config.global_config.project_name}-{self.environment}"
+        return f"{self.config.global_config.project_name}-{self.environment_name}"
 
     @property
     def is_spot_enabled(self) -> bool:
