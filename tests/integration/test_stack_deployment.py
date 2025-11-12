@@ -455,4 +455,4 @@ class TestStackDeployment:
         assert network_stack.config.global_config.tags["CostCenter"] == "Engineering"
 
         # Verify the stack would apply these tags (tags are applied in base stack constructor)
-        assert network_stack.environment == environment
+        assert network_stack.environment_name == environment
