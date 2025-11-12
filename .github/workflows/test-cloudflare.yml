@@ -89,8 +89,8 @@ jobs:
           EOF
 
           # Validate Docker Compose files
-          docker compose -f docker-compose.yml config --profiles cloudflare
-          docker compose -f docker-compose.prod.yml config
+          docker compose --profile cloudflare -f docker-compose.yml config
+          POSTGRES_PASSWORD=test docker compose -f docker-compose.prod.yml config
 
       - name: Test Cloudflare tunnel script
         run: |
