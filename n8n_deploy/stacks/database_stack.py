@@ -96,8 +96,8 @@ class DatabaseStack(N8nBaseStack):
         self.secret = secretsmanager.Secret(
             self,
             "DatabaseSecret",
-            secret_name=f"n8n/{self.environment}/db-credentials",
-            description=f"n8n database credentials for {self.environment}",
+            secret_name=f"n8n/{self.environment_name}/db-credentials",
+            description=f"n8n database credentials for {self.environment_name}",
             generate_secret_string=secretsmanager.SecretStringGenerator(
                 secret_string_template='{"username": "n8nadmin"}',
                 generate_string_key="password",
@@ -110,7 +110,7 @@ class DatabaseStack(N8nBaseStack):
         subnet_group = rds.SubnetGroup(
             self,
             "SubnetGroup",
-            description=f"Subnet group for n8n {self.environment}",
+            description=f"Subnet group for n8n {self.environment_name}",
             vpc=self.network_stack.vpc,
             vpc_subnets=ec2.SubnetSelection(subnets=self.network_stack.subnets),
             removal_policy=self.removal_policy,
@@ -165,8 +165,8 @@ class DatabaseStack(N8nBaseStack):
         self.secret = secretsmanager.Secret(
             self,
             "DatabaseSecret",
-            secret_name=f"n8n/{self.environment}/db-credentials",
-            description=f"n8n database credentials for {self.environment}",
+            secret_name=f"n8n/{self.environment_name}/db-credentials",
+            description=f"n8n database credentials for {self.environment_name}",
             generate_secret_string=secretsmanager.SecretStringGenerator(
                 secret_string_template='{"username": "n8nadmin"}',
                 generate_string_key="password",

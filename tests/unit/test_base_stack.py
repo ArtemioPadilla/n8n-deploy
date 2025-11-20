@@ -14,7 +14,7 @@ class TestBaseStack:
         """Test base stack initialization."""
         stack = N8nBaseStack(mock_app, "test-stack", config=test_config, environment="test")
 
-        assert stack.environment == "test"
+        assert stack.environment_name == "test"
         assert stack.config == test_config
         assert stack.env_config == test_config.get_environment("test")
         assert stack.stack_prefix == "test-n8n-test"

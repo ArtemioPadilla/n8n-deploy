@@ -102,7 +102,7 @@ class AccessStack(N8nBaseStack):
             self,
             "HttpApi",
             api_name=self.get_resource_name("api"),
-            description=f"n8n API for {self.environment}",
+            description=f"n8n API for {self.environment_name}",
             cors_preflight=(
                 apigatewayv2.CorsPreflightOptions(
                     allow_origins=self.access_config.cors_origins if self.access_config else ["*"],
@@ -230,7 +230,7 @@ class AccessStack(N8nBaseStack):
             enabled=True,
             http_version=cloudfront.HttpVersion.HTTP2_AND_3,
             enable_ipv6=True,
-            comment=f"n8n distribution for {self.environment}",
+            comment=f"n8n distribution for {self.environment_name}",
         )
 
         # Add cache behaviors for specific paths

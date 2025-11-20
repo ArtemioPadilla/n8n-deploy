@@ -178,7 +178,7 @@ class ComputeStack(N8nBaseStack):
             self,
             "ResilienceAlertTopic",
             topic_name=self.get_resource_name("resilience-alerts"),
-            display_name=f"n8n {self.environment} Resilience Alerts",
+            display_name=f"n8n {self.environment_name} Resilience Alerts",
         )
 
         # Add resilience construct
@@ -187,7 +187,7 @@ class ComputeStack(N8nBaseStack):
             "ResilientN8n",
             compute_stack=self,
             monitoring_topic=monitoring_topic,
-            environment=self.environment,
+            environment=self.environment_name,
         )
 
         # Pass DLQ URLs to n8n container as environment variables
@@ -207,8 +207,8 @@ class ComputeStack(N8nBaseStack):
         cf_config = self.env_config.settings.access.cloudflare
 
         # Create Cloudflare tunnel configuration
-        tunnel_name = cf_config.tunnel_name or f"n8n-{self.environment}"
-        tunnel_domain = cf_config.tunnel_domain or f"n8n-{self.environment}.example.com"
+        tunnel_name = cf_config.tunnel_name or f"n8n-{self.environment_name}"
+        tunnel_domain = cf_config.tunnel_domain or f"n8n-{self.environment_name}.example.com"
 
         # Create tunnel configuration
         self.cloudflare_config = CloudflareTunnelConfiguration(
@@ -217,7 +217,7 @@ class ComputeStack(N8nBaseStack):
             tunnel_name=tunnel_name,
             tunnel_domain=tunnel_domain,
             service_url="http://localhost:5678",
-            environment=self.environment,
+            environment=self.environment_name,
             tunnel_secret_name=cf_config.tunnel_token_secret_name,
             access_config=(
                 {
@@ -241,7 +241,7 @@ class ComputeStack(N8nBaseStack):
                 "tunnel_domain": tunnel_domain,
             },
             log_group=self.n8n_service.log_group,
-            environment=self.environment,
+            environment=self.environment_name,
         )
 
         # With Cloudflare Tunnel, no inbound rules are needed

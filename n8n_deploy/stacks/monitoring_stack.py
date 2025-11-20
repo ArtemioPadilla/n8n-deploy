@@ -79,7 +79,7 @@ class MonitoringStack(N8nBaseStack):
             self,
             "AlarmTopic",
             topic_name=self.get_resource_name("alarms"),
-            display_name=f"n8n {self.environment} Alarms",
+            display_name=f"n8n {self.environment_name} Alarms",
         )
 
         # Add email subscription if configured
