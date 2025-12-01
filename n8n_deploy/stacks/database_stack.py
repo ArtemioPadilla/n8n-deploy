@@ -128,10 +128,8 @@ class DatabaseStack(N8nBaseStack):
             credentials=rds.Credentials.from_secret(self.secret),
             default_database_name="n8n",
             cluster_identifier=self.get_resource_name("aurora"),
-            serverless_v2_scaling_configuration=rds.ServerlessV2ScalingConfiguration(
-                min_capacity=min_capacity,
-                max_capacity=max_capacity,
-            ),
+            serverless_v2_min_capacity=min_capacity,
+            serverless_v2_max_capacity=max_capacity,
             vpc=self.network_stack.vpc,
             subnet_group=subnet_group,
             security_groups=[self.db_security_group],
